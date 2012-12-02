@@ -1,0 +1,16 @@
+@(employeeForm: Form[List[String]])
+
+@import helper._
+
+@main("Employee Input") {
+    
+    @helper.form(action = routes.Application.submitForm) {
+		@repeat(employeeForm("employee"), min = 5) { emp =>
+                
+			@inputText(emp)
+
+		}
+		
+		<input type="submit" value="Create">
+	}
+}

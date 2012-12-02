@@ -1,0 +1,19 @@
+@(schedule: List[(model.Time, List[(model.Position, model.Employee)])])
+
+@main("Schedule Output") {
+    
+    <h1> Schedule </h1>
+	
+	@for((time, posList) <- schedule) {
+		<table border=1 cellpadding=5><tr>
+		<td> @time </td>
+		
+		@for((pos, emp) <- posList) {
+			<td> <center><b>@emp.name</b></center> <br /> @pos </td>
+		}
+		
+		</tr></table>
+	}
+	
+		
+}
