@@ -1,4 +1,4 @@
-@(schedule: (List[String], List[(model.Time, List[String])]))
+@(schedule: (List[String], List[(model.Time, Int, Int, List[String])]))
 
 @main("Schedule Output") {
     
@@ -12,10 +12,11 @@
 	}
 	</tr>
 
-	@for((time, posList) <- schedule._2) {
-		<tr><th class="time">@time</th>
+	@for((time, numPharm, numEmp, posList) <- schedule._2) {
+		<tr><th class="time">@time<br />@numPharm pharmacists<br />@numEmp employees</th>
 		@for(pos <- posList) {
-		  <td>@pos</td>
+		  @if(pos == "Off") { <td class="off"> } else { <td> }
+		  @pos</td>
 		}
 		</tr>
 	}

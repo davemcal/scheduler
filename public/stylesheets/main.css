@@ -45,6 +45,10 @@ header a {
 	border: 0;
 }
 
+#helloform fieldset:nth-child(even) {
+	background: #F8F8F8;
+}
+
 table {
 	border-collapse:collapse;
 }
@@ -56,6 +60,10 @@ th {
 
 td {
 	padding: 6px;
+}
+
+td.off {
+	background-color: #FFF0F0;
 }
 
 th.time {

@@ -22,7 +22,9 @@ object Application extends Controller {
   )
   
   def index = Action {
-    Ok(views.html.index(employeeForm.fill(Schedule.all_employees.sorted.map(new Employee(_, new Time(0), new Time(0), false)))))
+    Ok(views.html.index(employeeForm.fill(
+        Schedule.all_pharmacists.sorted.map(new Employee(_, new Time(0), new Time(0), true)) ++
+        Schedule.all_employees.sorted.map(new Employee(_, new Time(0), new Time(0), false)))))
   }
   
   def submitForm = Action { implicit request =>

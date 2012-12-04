@@ -22,6 +22,12 @@ object Schedule {
 		"Linda",
 		"Sharmilla",
 		"Jeff")
+	
+	val all_pharmacists = List(
+	    "Sue",
+	    "Chloe",
+	    "Karl",
+	    "Jen")
 }
 
 class Schedule (val employees: List[Employee]) {
@@ -140,7 +146,9 @@ class Schedule (val employees: List[Employee]) {
       val (time, posMap) = tuple
       val posMapString = posMap.map(t => (t._1, t._2.toString))
       
-      (time, employees.sortBy(_.name).map(posMapString.getOrElse(_, "Off")))
+      val (pharms, emps) = posMap.partition(_._1.isPharmacist)
+      
+      (time, pharms.size, emps.size, employees.sortBy(_.name).map(posMapString.getOrElse(_, "Off")))
     }))
   }
 
