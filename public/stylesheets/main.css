@@ -1,0 +1,64 @@
+html, body {
+    padding: 0;
+    margin: 0;
+    font-family: Helvetica, Arial;
+    color: #3A4244;
+}
+
+header a {
+    color: #1A1E20;
+    text-decoration: none;
+}
+
+#helloform dd {
+    display: inline-block;
+}
+
+#helloform label {
+    font-size: 14px;
+    display: none;
+}
+
+#helloform dl {
+	display: inline-block;
+    padding: 5px;
+    margin: 2px;
+    width: 200px;
+}
+
+#helloform dl.pharmacist {
+	width: 100px;
+}
+
+#helloform dl.error {
+    background: #FBDDE6;
+}
+
+#helloform dt {
+    display: inline-block;
+    float: left;
+}
+
+#helloform fieldset {
+	padding: 0;
+	margin: 0;
+	border: 0;
+}
+
+table {
+	border-collapse:collapse;
+}
+
+th {
+	background-color: #F0F0F0;
+	padding: 8px;
+}
+
+td {
+	padding: 6px;
+}
+
+th.time {
+	text-align: right;
+}
+

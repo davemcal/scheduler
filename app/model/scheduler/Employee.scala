@@ -1,14 +1,28 @@
 package model
 
-class Employee(strRep: String) {
-
-  val empRegex = """([a-zA-Z0-9]+)\s*(\d{1,2}:\d{2}[apAP][mM])\s*-\s*(\d{1,2}:\d{2}[apAP][mM])\s*(P)?""".r
-
-  val (name, start, end, isPharmacist) = {
-    val empRegex(name_str, start_str, end_str, pharmacist) = strRep
-
-    (name_str, Time(start_str), Time(end_str), pharmacist != null)
+object Employee {
+  def apply(name: String, start: String, end: String, isPharmacist: Boolean = false) = {
+	  new Employee(name, Time(start, TimeOfDay.AM), Time(end, TimeOfDay.PM), isPharmacist)
   }
+
+  def apply(strRep: String) = {
+    val empRegex = """([a-zA-Z0-9]+)\s*(\d{1,2}:\d{2}[apAP][mM])\s*-\s*(\d{1,2}:\d{2}[apAP][mM])\s*(P)?""".r
+
+    val (name, start, end, isPharmacist) = {
+      val empRegex(name_str, start_str, end_str, pharmacist) = strRep
+
+      (name_str, Time(start_str), Time(end_str), pharmacist != null)
+    }
+    
+    new Employee(name, start, end, isPharmacist)
+  }
+  
+  def unapply(e: Employee) : Option[(String, String, String, Boolean)] = {
+    Some((e.name, e.start.toString, e.end.toString, e.isPharmacist))
+  }
+}
+
+class Employee(val name: String, val start: Time, val end: Time, val isPharmacist: Boolean) {
 
   override def toString = "%s (%s - %s) %s".format(name, start, end, if (isPharmacist) "[Pharmacist]" else "")
 

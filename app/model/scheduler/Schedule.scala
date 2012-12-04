@@ -1,7 +1,32 @@
 package model
 
-class Schedule (employeeStrings: List[String]) {
-  val employees = employeeStrings.map(new Employee(_))
+object Schedule {
+	val all_employees = List(
+		"Kim",
+		"Lyndsay",
+		"Erin",
+		"Tricia",
+		"Mary Jo",
+		"Beth",
+		"Vicki",
+		"Macy",
+		"Laura",
+		"Chris",
+		"Heather",
+		"Kaitlyn",
+		"Donald",
+		"Megan",
+		"Ashlee",
+		"Mirette",
+		"Lindsay M.",
+		"Linda",
+		"Sharmilla",
+		"Jeff")
+}
+
+class Schedule (val employees: List[Employee]) {
+
+  //val employees = employeeStrings.map(new Employee(_))
 
   def printSchedule = fullSchedule foreach (tuple => {
     val (time, positionList) = tuple
@@ -102,6 +127,21 @@ class Schedule (employeeStrings: List[String]) {
 
       emp.score(t, pos, h)
     }).sum
+  }
+  
+  def displayableSchedule = {
+    val scheduleMap = fullSchedule.map(tuple => {
+      val (time, list) = tuple
+      
+      (time, list.map(t => (t._2, t._1)).toMap)
+    })
+    
+    (employees.map(_.name).sorted, scheduleMap.map(tuple => {
+      val (time, posMap) = tuple
+      val posMapString = posMap.map(t => (t._1, t._2.toString))
+      
+      (time, employees.sortBy(_.name).map(posMapString.getOrElse(_, "Off")))
+    }))
   }
 
   def fullSchedule = {

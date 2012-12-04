@@ -1,19 +1,23 @@
-@(schedule: List[(model.Time, List[(model.Position, model.Employee)])])
+@(schedule: (List[String], List[(model.Time, List[String])]))
 
 @main("Schedule Output") {
     
     <h1> Schedule </h1>
 	
-	@for((time, posList) <- schedule) {
-		<table border=1 cellpadding=5><tr>
-		<td> @time </td>
-		
-		@for((pos, emp) <- posList) {
-			<td> <center><b>@emp.name</b></center> <br /> @pos </td>
-		}
-		
-		</tr></table>
+	<table border=1 cellpadding=5>
+
+	<tr><th></th>
+	@for(e <- schedule._1) {
+	  <th class="employee"> @e </th>
 	}
-	
-		
+	</tr>
+
+	@for((time, posList) <- schedule._2) {
+		<tr><th class="time">@time</th>
+		@for(pos <- posList) {
+		  <td>@pos</td>
+		}
+		</tr>
+	}
+	</table>
 }
