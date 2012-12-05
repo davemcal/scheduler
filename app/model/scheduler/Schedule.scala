@@ -142,13 +142,13 @@ class Schedule (val employees: List[Employee]) {
       (time, list.map(t => (t._2, t._1)).toMap)
     })
     
-    (employees.map(_.name).sorted, scheduleMap.map(tuple => {
+    (employees.sortBy(e => (!e.isPharmacist, e.name.toUpperCase())).map(e => if (e.isPharmacist) e.name + " [Pharmacist]" else e.name), scheduleMap.map(tuple => {
       val (time, posMap) = tuple
       val posMapString = posMap.map(t => (t._1, t._2.toString))
       
       val (pharms, emps) = posMap.partition(_._1.isPharmacist)
       
-      (time, pharms.size, emps.size, employees.sortBy(_.name).map(posMapString.getOrElse(_, "Off")))
+      (time, pharms.size, emps.size, employees.sortBy(e => (!e.isPharmacist, e.name.toUpperCase())).map(posMapString.getOrElse(_, "Off")))
     }))
   }
 

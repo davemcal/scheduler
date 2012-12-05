@@ -10,20 +10,35 @@ header a {
     text-decoration: none;
 }
 
+
+
+div.date {
+	clear: both;
+}
+
+#helloform table {
+	clear: both;
+}
+
+#helloform td.pharmacist {
+	width: 50px;
+}
+
 #helloform dd {
     display: inline-block;
 }
 
 #helloform label {
+	float: left;
+	display: inline-block;
     font-size: 14px;
-    display: none;
 }
 
 #helloform dl {
 	display: inline-block;
     padding: 5px;
     margin: 2px;
-    width: 200px;
+    float: left;
 }
 
 #helloform dl.pharmacist {
@@ -45,8 +60,8 @@ header a {
 	border: 0;
 }
 
-#helloform fieldset:nth-child(even) {
-	background: #F8F8F8;
+#helloform tr:nth-child(even) {
+	background: #F0F0F0;
 }
 
 table {

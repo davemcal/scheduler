@@ -27,8 +27,8 @@ object Time {
 
   def apply(strRep: String, defaultTimeOfDay: Int = TimeOfDay.AM) = {
     def adjustedOffset(hour: Int) = {
-      if (hour <= 7) TimeOfDay.PM
-      else if (hour >= 11) TimeOfDay.AM
+      if (hour <= 7 || hour == 12) TimeOfDay.PM
+      else if (hour == 11) TimeOfDay.AM
       else defaultTimeOfDay
     }
 

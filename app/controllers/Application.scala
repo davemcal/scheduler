@@ -8,31 +8,30 @@ import play.api.data.validation.Constraints._
 
 import model._
 
+import java.util.Calendar
+
 object Application extends Controller {
-  
-  val employeeForm: Form[Seq[Employee]] = Form(
-	"employees" -> seq(
-	    mapping(
-	        "name" -> text,
-	        "start" -> text,
-	        "end" -> text,
-	        "isPharmacist" -> boolean
-	    )(Employee.apply)(Employee.unapply)
-	)
-  )
-  
+
+  val employeeForm = Form(tuple(
+    "date" -> text,
+    "employees" -> seq(
+      mapping(
+        "name" -> text,
+        "start" -> text,
+        "end" -> text,
+        "isPharmacist" -> boolean)(Employee.apply)(Employee.unapply))))
+
   def index = Action {
-    Ok(views.html.index(employeeForm.fill(
-        Schedule.all_pharmacists.sorted.map(new Employee(_, new Time(0), new Time(0), true)) ++
-        Schedule.all_employees.sorted.map(new Employee(_, new Time(0), new Time(0), false)))))
+    Ok(views.html.index(employeeForm.fill(((Calendar.getInstance().get(Calendar.MONTH)+1) + "/" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "/" + Calendar.getInstance().get(Calendar.YEAR),
+      Schedule.all_pharmacists.sorted.map(new Employee(_, new Time(0), new Time(0), true)) ++
+        Schedule.all_employees.sorted.map(new Employee(_, new Time(0), new Time(0), false))))))
   }
-  
+
   def submitForm = Action { implicit request =>
     employeeForm.bindFromRequest.fold(
       errors => BadRequest(views.html.index(employeeForm)),
-      emps => Ok(views.html.results(new Schedule(emps.filter(e => e.start != new Time(0) || e.end != new Time(0)).toList).displayableSchedule))
-      //emps => Ok(views.html.test(emps.filter(e => e.start != new Time(0) || e.end != new Time(0))))
-    )
+      formResult => Ok(views.html.results(formResult._1, new Schedule(formResult._2.filter(e => e.start != new Time(0) || e.end != new Time(0)).toList).displayableSchedule)) //emps => Ok(views.html.test(emps.filter(e => e.start != new Time(0) || e.end != new Time(0))))
+      )
   }
-  
+
 }
