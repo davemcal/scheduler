@@ -20,6 +20,15 @@ object Employee {
   def unapply(e: Employee) : Option[(String, String, String, Boolean)] = {
     Some((e.name, e.start.toString, e.end.toString, e.isPharmacist))
   }
+  
+  val workRestrictions = Map(
+    "Ashlee" -> Set(
+      PositionType.pickup,
+      PositionType.drivethru),
+    "Megan" -> Set(
+      PositionType.pickup,
+      PositionType.drivethru,
+      PositionType.production))
 }
 
 class Employee(val name: String, val start: Time, val end: Time, val isPharmacist: Boolean) {
@@ -28,8 +37,10 @@ class Employee(val name: String, val start: Time, val end: Time, val isPharmacis
 
   def working(t: Time) = start <= t && end > t
 
+  val validPositions = Employee.workRestrictions.getOrElse(name, Position.allTech)
+  
   def valid(t: (Time, Int), p: Position, h: List[(Time, List[(Position, Employee)])]) = {
-    score(t, p, h) < 50
+    if (isPharmacist) true else validPositions.contains(p.main) && score(t, p, h) < 51
   }
 
   def score(t: (Time, Int), p: Position, h: List[(Time, List[(Position, Employee)])]) = {

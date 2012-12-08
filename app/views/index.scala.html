@@ -5,7 +5,7 @@
 @main("Employee Input") {
 	
     @helper.form(action = routes.Application.submitForm, args = 'id -> "helloform") {
-      <div class="date"><h2> Date </h2> <input type="text" id="date" name="date" value="12/5/2012" ><div>
+      <div class="date"><h2> Date </h2> @inputText(employeeForm("date"), '_label -> "")<div>
       <table>
       <tr>
     	<td><dl><dd>Name</dd></dl></td>
