@@ -8,8 +8,8 @@ import play.api.Play.current
 object Database {
 
   val employee = {
-    get[Long]("id") ~
-      get[String]("name") map {
+    get[Long]("e_id") ~
+      get[String]("e_name") map {
         case id ~ name  => new Employee(name, new Time(0), new Time(0), false)
       }
   }
