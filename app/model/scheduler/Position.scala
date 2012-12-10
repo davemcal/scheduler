@@ -7,6 +7,7 @@ object PositionType extends Enumeration {
   val pickup = Value("Pick Up")
   val production = Value("Production")
   val qa = Value("QA")
+  val off = Value("Off")
 }
 
 import PositionType._
@@ -14,7 +15,11 @@ import PositionType._
 class Position(val main: PositionType, val number: Int, val description: String, val isPharmacist: Boolean) {
   def ==(that: Position) = main.equals(that.main) && number == that.number
   
-  override def toString = main.toString + " " + number + (if (description != "") " (" + description + ")" else "")
+  override def toString = {
+    val mainStr = main.toString + (if (number > 0) " " + number else "")
+    
+    mainStr + (if (description != "") " (" + description + ")" else "")
+  }
 }
 
 object Position {

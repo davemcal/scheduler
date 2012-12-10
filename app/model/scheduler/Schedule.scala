@@ -37,13 +37,15 @@ class Schedule(val dateStr: String, val employees: List[Employee]) {
   //val employees = employeeStrings.map(new Employee(_))
 
   val dayOfWeek = {
+    import java.util.TimeZone
+
     val dateParse = """(\d?\d)/(\d?\d)/(\d\d\d\d)""".r
 
     val dateParse(month, day, year) = dateStr
 
     val c = Calendar.getInstance()
+    c.setTimeZone(TimeZone.getTimeZone("America/New_York"))
     c.set(year.toInt, month.toInt - 1, day.toInt)
-
     List("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")(c.get(Calendar.DAY_OF_WEEK) - 1)
   }
 
@@ -172,13 +174,38 @@ class Schedule(val dateStr: String, val employees: List[Employee]) {
       (time, list.map(t => (t._2, t._1)).toMap)
     })
 
+    /*val schedByEmployee = employees.map(e => {
+      def addPos(list: List[(Time, Int, Position)], tuple: (Time, Map[Employee, Position])) = {
+        val employeePosition = tuple._2.getOrElse(e, new Position(PositionType.off, 0, "", false))
+        val time = tuple._1
+
+        list match {
+          case Nil => List((time, 1, employeePosition))
+          case (oldTime, occurrences, oldPos) :: rest => {
+            if (employeePosition.main == oldPos.main &&
+              employeePosition.number == oldPos.number &&
+              employeePosition.description == oldPos.description) {
+              (oldTime, occurrences + 1, oldPos) :: rest
+            } else (time, 1, employeePosition) :: list
+          }
+        }
+      }
+
+      (e, scheduleMap.foldLeft(List.empty: List[(Time, Int, Position)])(addPos))
+    }).toMap*/
+
     (employees.sortBy(e => (!e.isPharmacist, e.name.toUpperCase())).map(e => if (e.isPharmacist) e.name + " [Pharmacist]" else e.name), scheduleMap.map(tuple => {
       val (time, posMap) = tuple
       val posMapString = posMap.map(t => (t._1, t._2.toString))
 
       val (pharms, emps) = posMap.partition(_._1.isPharmacist)
 
-      (time, pharms.size, emps.size, employees.sortBy(e => (!e.isPharmacist, e.name.toUpperCase())).map(posMapString.getOrElse(_, "Off")))
+      val sorted = employees.sortBy(e => (!e.isPharmacist, e.name.toUpperCase()))
+      /*val empsForTime = sorted.collect(e => schedByEmployee(e).find(tuple => tuple._1 == time) match {
+        case Some((time, occ, pos)) => (time, occ, pos)
+      })*/
+
+      (time, pharms.size, emps.size, sorted.map(posMap.getOrElse(_, new Position(PositionType.off, 0, "", false))))
     }))
   }
 
