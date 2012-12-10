@@ -7,7 +7,7 @@ CREATE TABLE employee (
     id integer NOT NULL DEFAULT nextval('employee_id_seq'),
     name varchar(255),
     start int,
-    end int,
+    endtime int,
     ispharmacist boolean
 );
  
