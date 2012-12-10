@@ -4,10 +4,13 @@
 
 CREATE SEQUENCE employee_id_seq;
 CREATE TABLE employee (
-    e_id integer NOT NULL DEFAULT nextval('employee_id_seq'),
-    e_name varchar(255)
+    eid integer NOT NULL DEFAULT nextval('employee_id_seq'),
+    ename varchar(255),
+    estart int,
+    eend int,
+    eispharmacist boolean
 );
- 
+
 # --- !Downs
  
 DROP TABLE employee;

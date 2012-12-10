@@ -8,27 +8,30 @@ import play.api.Play.current
 object Database {
 
   val employee = {
-    get[Long]("e_id") ~
-      get[String]("e_name") map {
-        case id ~ name  => new Employee(name, new Time(0), new Time(0), false)
+    get[Long]("eid") ~
+      get[String]("ename") ~
+      get[Int]("estart") ~
+      get[Int]("eend") ~
+      get[Boolean]("eispharmacist") map {
+        case id ~ name ~ start ~ end ~ isPharmacist  => new Employee(name, new Time(start), new Time(end), isPharmacist)
       }
   }
 
   def all(): List[Employee] = DB.withConnection { implicit c =>
-    //SQL("select * from employee").as(employee *)
-    List.empty
+    SQL("select * from employee").as(employee *)
   }
 
   def insert(e: Employee) {
     DB.withConnection { implicit c =>
-      //SQL("insert into employee (name) values ({name})").on(
-      //  'name -> e.name).executeUpdate()
+      SQL("insert into employee (ename, estart, eend, eispharmacist) values ({name}, {start}, {end}, {ispharmacist})").on(
+        'name -> e.name, 'start -> e.start.minutes, 'end -> e.end.minutes, 'ispharmacist -> e.isPharmacist).executeUpdate()
+      println("inserting " + e)
     }
   }
 
   def delete() {
     DB.withConnection { implicit c =>
-      //SQL("delete from employee where 1 = 1").on().executeUpdate()
+      SQL("delete from employee where 1 = 1").on().executeUpdate()
     }
   }
 }
