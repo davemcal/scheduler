@@ -15,19 +15,20 @@ object Database {
   }
 
   def all(): List[Employee] = DB.withConnection { implicit c =>
-    SQL("select * from employee").as(employee *)
+    //SQL("select * from employee").as(employee *)
+    List.empty
   }
 
   def insert(e: Employee) {
     DB.withConnection { implicit c =>
-      SQL("insert into employee (name) values ({name})").on(
-        'name -> e.name).executeUpdate()
+      //SQL("insert into employee (name) values ({name})").on(
+      //  'name -> e.name).executeUpdate()
     }
   }
 
   def delete() {
     DB.withConnection { implicit c =>
-      SQL("delete from employee where 1 = 1").on().executeUpdate()
+      //SQL("delete from employee where 1 = 1").on().executeUpdate()
     }
   }
 }
