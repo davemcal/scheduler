@@ -9,11 +9,8 @@ object Database {
 
   val employee = {
     get[Long]("id") ~
-      get[String]("name") ~
-      get[Int]("start") ~
-      get[Int]("endtime") ~
-      get[Boolean]("ispharmacist") map {
-        case id ~ name ~ start ~ end ~ isPharmacist => new Employee(name, new Time(start), new Time(end), isPharmacist)
+      get[String]("name") map {
+        case id ~ name  => new Employee(name, new Time(0), new Time(0), false)
       }
   }
 
@@ -23,8 +20,8 @@ object Database {
 
   def insert(e: Employee) {
     DB.withConnection { implicit c =>
-      SQL("insert into employee (name, start, endtime, ispharmacist) values ({name}, {start}, {end}, {ispharmacist})").on(
-        'name -> e.name, 'start -> e.start.minutes, 'end -> e.end.minutes, 'ispharmacist -> e.isPharmacist).executeUpdate()
+      SQL("insert into employee (name) values ({name})").on(
+        'name -> e.name).executeUpdate()
     }
   }
 
