@@ -1,0 +1,66 @@
+@(month: Int, day: Int, year: Int, employeeForm: Form[Seq[model.Employee]])
+
+@import helper._
+@import java.util.Calendar
+    
+
+@today = @{		
+	val c = Calendar.getInstance()
+	c.set(year.toInt, month.toInt - 1, day.toInt)
+	c
+}
+
+@fromToday(days: Int) = @{
+  val c = today
+  
+  c.add(Calendar.DAY_OF_MONTH, days)
+  c
+}
+
+@displayDay(c: java.util.Calendar) = @{
+	val dayOfWeek = List("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")(c.get(Calendar.DAY_OF_WEEK) - 1)       
+      
+    "%s %d/%d/%d".format(
+        dayOfWeek, 
+        c.get(Calendar.MONTH) + 1, 
+        c.get(Calendar.DAY_OF_MONTH), 
+        c.get(Calendar.YEAR)) 
+}
+
+@displayLink(c: java.util.Calendar) = @{
+	val linkMonth = c.get(Calendar.MONTH) + 1
+	val linkDay = c.get(Calendar.DAY_OF_MONTH)
+    val linkYear = c.get(Calendar.YEAR)
+      
+    routes.Application.showForm(linkMonth, linkDay, linkYear)
+}
+
+@main(("%d/%d/%d Schedule Input".format(month, day, year))) {
+	
+    @helper.form(action = routes.Application.submitFormNoDate(month, day, year), args = 'id -> "helloform") {
+      <div class="date"><h2> @displayDay(today) </h2>
+    	@for( n <- 1 to 7) {
+    	  <a href = "@displayLink(fromToday(n))"> @displayDay(fromToday(n)) </a>
+    	}
+    	<br />
+    	<input type="submit" value="Create">
+		<input type="reset" value="Clear times">
+    	</div>
+      <table>
+      <tr>
+    	<td><dl><dd>Name</dd></dl></td>
+    	<td class="pharmacist"><dl><dd>Pharmacist</dd></dl></td>
+    	<td><dl><dd>Start Time</dd></dl></td>
+    	<td><dl><dd>End Time</dd></dl></td>
+      </tr>
+		@repeat(employeeForm("employees"), min = 5) { emp =>
+            <tr>
+			<td>@inputText(emp("name"), '_label -> "")</td>
+			<td>@checkbox(emp("isPharmacist"), '_label -> "")</td>
+			<td>@inputText(emp("start"), '_label -> "")</td>
+			<td>@inputText(emp("end"), '_label -> "")</td>
+			</tr>
+		}
+		</table>
+	}
+}

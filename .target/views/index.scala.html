@@ -1,0 +1,29 @@
+@(employeeForm: Form[(String, Seq[model.Employee])])
+
+@import helper._
+
+@main("Employee Input") {
+	
+    @helper.form(action = routes.Application.submitForm, args = 'id -> "helloform") {
+      <div class="date"><h2> Date </h2> @inputText(employeeForm("date"), '_label -> "")
+    	<input type="submit" value="Create">
+		<input type="reset" value="Clear times">
+    	</div>
+      <table>
+      <tr>
+    	<td><dl><dd>Name</dd></dl></td>
+    	<td class="pharmacist"><dl><dd>Pharmacist</dd></dl></td>
+    	<td><dl><dd>Start Time</dd></dl></td>
+    	<td><dl><dd>End Time</dd></dl></td>
+      </tr>
+		@repeat(employeeForm("employees"), min = 5) { emp =>
+            <tr>
+			<td>@inputText(emp("name"), '_label -> "")</td>
+			<td>@checkbox(emp("isPharmacist"), '_label -> "")</td>
+			<td>@inputText(emp("start"), '_label -> "")</td>
+			<td>@inputText(emp("end"), '_label -> "")</td>
+			</tr>
+		}
+		</table>
+	}
+}

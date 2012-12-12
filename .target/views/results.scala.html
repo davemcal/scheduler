@@ -1,0 +1,27 @@
+@(date: String, schedule: (List[model.Employee], List[(model.Time, Int, Int, List[model.Position])]))
+
+@main("Schedule Output") {
+    
+    <h1> Schedule for @date</h1>
+	
+	<table border=1 cellpadding=5>
+
+	<thead><tr><th></th>
+	@for(e <- schedule._1) {
+	  <th class="employee"> @e.name 
+		@if(e.isPharmacist) { 
+		  [Pharmacist]
+		}
+		<br /> @e.start - @e.end </th>
+	}
+	</tr></thead>
+
+	@for((time, numPharm, numEmp, posList) <- schedule._2) {
+		<tr><th class="time">@time<br />@numPharm pharmacists<br />@numEmp techs</th>
+		@for(pos <- posList) {
+		  <td><center>@pos</center></td>
+		}
+		</tr>
+	}
+	</table>
+}
