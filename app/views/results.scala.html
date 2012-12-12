@@ -1,4 +1,4 @@
-@(date: String, schedule: (List[String], List[(model.Time, Int, Int, List[model.Position])]))
+@(date: String, schedule: (List[model.Employee], List[(model.Time, Int, Int, List[model.Position])]))
 
 @main("Schedule Output") {
     
@@ -8,7 +8,11 @@
 
 	<thead><tr><th></th>
 	@for(e <- schedule._1) {
-	  <th class="employee"> @e </th>
+	  <th class="employee"> @e.name 
+		@if(e.isPharmacist) { 
+		  [Pharmacist]
+		}
+		<br /> @e.start - @e.end </th>
 	}
 	</tr></thead>
 

@@ -143,7 +143,7 @@ class Schedule(val dateStr: String, val employees: List[Employee]) {
   def storeCloseTime = employees.map(_.end).max
   def rotateTimes = {
     def rotate0(start: Time): List[Time] =
-      if (start < storeCloseTime)
+      if (start <= storeCloseTime)
         start :: rotate0(new Time(start.minutes + 2 * 60))
       else
         Nil
@@ -155,7 +155,8 @@ class Schedule(val dateStr: String, val employees: List[Employee]) {
     val sendTimes = if (sendOVorder) List(Time("6:30pm"), Time("7:30pm")) else Nil
     val receiveTimes = if (receiveOVorder) List(Time("1:30pm"), Time("2:30pm")) else Nil
 
-    val times = (sendTimes ++ receiveTimes ++ /*rotateTimes ++*/ employees.map(_.start) ++ employees.map(_.end)).sorted.distinct
+    //val times = (sendTimes ++ receiveTimes ++ /*rotateTimes ++*/ employees.map(_.start) ++ employees.map(_.end)).sorted.distinct
+    val times = (rotateTimes ++ employees.map(_.end)).sorted.distinct
     times.sliding(2).toList.map(list => (list.head, list.last - list.head))
   }
 
@@ -194,7 +195,7 @@ class Schedule(val dateStr: String, val employees: List[Employee]) {
       (e, scheduleMap.foldLeft(List.empty: List[(Time, Int, Position)])(addPos))
     }).toMap*/
 
-    (employees.sortBy(e => (!e.isPharmacist, e.name.toUpperCase())).map(e => if (e.isPharmacist) e.name + " [Pharmacist]" else e.name), scheduleMap.map(tuple => {
+    (employees.sortBy(e => (!e.isPharmacist, e.name.toUpperCase())), scheduleMap.map(tuple => {
       val (time, posMap) = tuple
       val posMapString = posMap.map(t => (t._1, t._2.toString))
 
@@ -220,7 +221,7 @@ class Schedule(val dateStr: String, val employees: List[Employee]) {
 
           scheduleFrom(timesLeft.tail, (timesLeft.head._1, List.empty) :: h)
         } else {
-          val scheduleForCurrentTime = scheduleOptions.minBy(scoreCurrentSchedule(timesLeft.head, _, h))
+          val scheduleForCurrentTime = scheduleOptions.minBy(l => (scoreCurrentSchedule(timesLeft.head, l, h), l.map(_._2.name).mkString))
 
           scheduleFrom(timesLeft.tail, (timesLeft.head._1, scheduleForCurrentTime) :: h)
         }
@@ -261,6 +262,8 @@ class Schedule(val dateStr: String, val employees: List[Employee]) {
   }
 
   val positionsMap: Map[(Int, Int), List[Position]] = Map(
+    (1, 0) -> List(
+      new Position(PositionType.qa, 1, "", true)),
     (1, 1) -> List(
       new Position(PositionType.pickup, 1, "drive thru 1, production 1, drop off 2", false),
       new Position(PositionType.qa, 1, "drop off 1, pick up 2, drive thru 2, production 2", true)),

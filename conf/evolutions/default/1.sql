@@ -8,7 +8,8 @@ CREATE TABLE employee (
     ename varchar(255),
     estart int,
     eend int,
-    eispharmacist boolean
+    eispharmacist boolean,
+    edate date
 );
 
 # --- !Downs
