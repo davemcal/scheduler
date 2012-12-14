@@ -1,71 +1,4 @@
-html, body {
-    padding: 0;
-    margin: 0;
-    font-family: Helvetica, Arial;
-    color: #3A4244;
-}
-
-header a {
-    color: #1A1E20;
-    text-decoration: none;
-}
-
-
-
-div.date {
-	clear: both;
-}
-
-#helloform table {
-	clear: both;
-}
-
-#helloform td.pharmacist {
-	width: 50px;
-}
-
-#helloform dd {
-    display: inline-block;
-}
-
-#helloform label {
-	float: left;
-	display: inline-block;
-    font-size: 14px;
-}
-
-#helloform dl {
-	display: inline-block;
-    padding: 5px;
-    margin: 2px;
-    float: left;
-}
-
-#helloform dl.pharmacist {
-	width: 100px;
-}
-
-#helloform dl.error {
-    background: #FBDDE6;
-}
-
-#helloform dt {
-    display: inline-block;
-    float: left;
-}
-
-#helloform fieldset {
-	padding: 0;
-	margin: 0;
-	border: 0;
-}
-
-#helloform tr:nth-child(even) {
-	background: #F0F0F0;
-}
-
 table {
-	border-collapse:collapse;
 	page-break-inside:auto;
 }
 
@@ -77,21 +10,12 @@ thead {
 	display:table-header-group;
 }
 
+th.employee {
+	text-align: center;
+}
+
 tfoot { 
 	display:table-footer-group;
-}
-
-th {
-	background-color: #F0F0F0;
-	padding: 8px;
-}
-
-td {
-	padding: 6px;
-}
-
-td.off {
-	background-color: #FFF0F0;
 }
 
 th.time {

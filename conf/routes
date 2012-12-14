@@ -10,4 +10,7 @@ GET		/show/:month/:day/:year		controllers.Application.showForm(month: Int, day: 
 POST    /show/:month/:day/:year     controllers.Application.submitFormNoDate(month: Int, day: Int, year: Int)
 
 # Map static resources from the /public folder to the /assets URL path
+GET     /assets/img/glyphicons-halflings-white.png      controllers.Assets.at(path="/public", file="/img/glyphicons-halflings-white.png")
+GET     /assets/img/glyphicons-halflings.png            controllers.Assets.at(path="/public", file="/img/glyphicons-halflings.png")
+
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

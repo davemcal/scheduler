@@ -1,13 +1,17 @@
 @(month: Int, day: Int, year: Int, employeeForm: Form[Seq[model.Employee]])
 
-@import helper._
 @import java.util.Calendar
-    
-
-@today = @{		
+@import helper._
+@implicitField = @{ views.html.helper.FieldConstructor(minimalfields.f) }
+	
+@formDay = @{		
 	val c = Calendar.getInstance()
 	c.set(year.toInt, month.toInt - 1, day.toInt)
 	c
+}
+
+@today = @{
+	Calendar.getInstance()
 }
 
 @fromToday(days: Int) = @{
@@ -35,32 +39,108 @@
     routes.Application.showForm(linkMonth, linkDay, linkYear)
 }
 
-@main(("%d/%d/%d Schedule Input".format(month, day, year))) {
-	
-    @helper.form(action = routes.Application.submitFormNoDate(month, day, year), args = 'id -> "helloform") {
-      <div class="date"><h2> @displayDay(today) </h2>
-    	@for( n <- 1 to 7) {
-    	  <a href = "@displayLink(fromToday(n))"> @displayDay(fromToday(n)) </a>
-    	}
-    	<br />
-    	<input type="submit" value="Create">
-		<input type="reset" value="Clear times">
-    	</div>
-      <table>
-      <tr>
-    	<td><dl><dd>Name</dd></dl></td>
-    	<td class="pharmacist"><dl><dd>Pharmacist</dd></dl></td>
-    	<td><dl><dd>Start Time</dd></dl></td>
-    	<td><dl><dd>End Time</dd></dl></td>
-      </tr>
-		@repeat(employeeForm("employees"), min = 5) { emp =>
-            <tr>
-			<td>@inputText(emp("name"), '_label -> "")</td>
-			<td>@checkbox(emp("isPharmacist"), '_label -> "")</td>
-			<td>@inputText(emp("start"), '_label -> "")</td>
-			<td>@inputText(emp("end"), '_label -> "")</td>
-			</tr>
+@main(("Schedule %d/%d/%d".format(month, day, year))) {
+    @form(routes.Application.submitFormNoDate(month, day, year)) {
+      
+		
+			<legend>
+				Employee Schedule
+				<div class="btn-group">
+				  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+					@displayDay(formDay)
+					<span class="caret"></span>
+				  </a>
+				  <ul class="dropdown-menu">
+					@for( n <- 0 to 7) {
+						@if(fromToday(n) == formDay) {
+							<li><a href = "#"> <b>@displayDay(fromToday(n))</b> </a></li>
+						} else {
+							<li><a href = "@displayLink(fromToday(n))"> @displayDay(fromToday(n)) </a></li>
+						}
+					}
+				  </ul>
+				</div>
+				<button type="submit" class="btn btn-primary" data-loading-text="Loading..."> Create </button>
+		
+				<button type="button" class="btn clearTimes"> Clear Times </button>
+			</legend>
+		
+		@repeat(employeeForm("employees"), min = 1) { emp =>
+          <div class="employeeInfo accordion-group span6">
+			<div class="accordion-heading">
+			  <a class="employeeHeading accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#@emp.id">
+				@if(emp("name").value.getOrElse("") == "") {
+					Add a new employee
+				} else {
+					@emp("name").value
+					@if(emp("isPharmacist").value.getOrElse(false).toString == "true") {
+						<i class="icon-star"></i>
+					} else {
+						<i class="icon-star-empty"></i>
+					}
+					
+					@if(emp("start").value.getOrElse("") == "") {
+						(Off)
+					} else {
+						(@emp("start").value - @emp("end").value)
+					}
+				}
+				<i class = "icon-chevron-down pull-right"></i>
+			  </a>
+			</div>
+			<div id="@emp.id" class="accordion-body collapse">
+			  <div class="accordion-inner">
+				<div class="controls controls-row">
+					@helper.inputText(emp("name"), '_label -> "", 'class -> "employeeData employeeName span2")
+					
+					<label class="checkbox inline">
+					<input type="checkbox" name="@emp("isPharmacist").name" id="@emp("isPharmacist").id" @if(emp("isPharmacist").value.getOrElse(false).toString == "true") {
+						checked
+					} class="employeeData employeeIsPharmacist" value = "true" />Pharmacist</label>
+				</div>
+				<div class="controls controls-row">
+					@helper.inputText(emp("start"), '_label -> "", 'placeholder -> "Start Time", 'class -> "employeeData employeeStart span2")
+					@helper.inputText(emp("end"), '_label -> "", 'placeholder -> "End Time", 'class -> "employeeData employeeEnd span2")
+				</div>
+			  </div>
+			</div>
+		  </div>			
 		}
-		</table>
+		
+		
+		
 	}
+	
+	<script type="text/javascript" charset="utf-8">
+		$('.employeeData').change(function() {
+			var data = $(this).closest(".accordion-inner");
+			var htmlText = data.find(".employeeName").val();
+			if (data.find(".employeeIsPharmacist").is(":checked")) {
+				htmlText = htmlText + " <i class='icon-star'></i> ";
+			} else {
+				htmlText = htmlText + " <i class='icon-star-empty'></i> ";
+			}
+			if (data.find(".employeeStart").val() == "" && data.find(".employeeEnd").val() == "") {
+				htmlText = htmlText + "(Off)"
+			} else {
+				var timeRegex = /(\d\d?):?(\d\d)?(a|pm)?/;
+				var startArr = timeRegex.exec(data.find(".employeeStart").val());
+				var startMinutes = "00";
+				if (startArr[2] != undefined) startMinutes = startArr[2];
+				var startAMPM = "am";
+				if (startArr[1] < 7 || startArr[1] == 12) startAMPM = "pm"
+				if (startArr[3] != undefined) startAMPM = startArr[3];
+				htmlText = htmlText + "(" + startArr[1] + ":" + startMinutes + startAMPM + " - ";
+				var endArr = timeRegex.exec(data.find(".employeeEnd").val());
+				var endMinutes = "00";
+				if (endArr[2] != undefined) endMinutes = endArr[2];
+				var endAMPM = "pm";
+				if (endArr[1] == 11) endAMPM = "am"
+				if (endArr[3] != undefined) endAMPM = endArr[3];
+				htmlText = htmlText + endArr[1] + ":" + endMinutes + endAMPM + ')';
+			}
+			htmlText = htmlText + "<i class = 'icon-chevron-down pull-right'></i>";			
+			$(this).closest(".employeeInfo").find(".employeeHeading").html(htmlText);
+		});
+	</script>
 }

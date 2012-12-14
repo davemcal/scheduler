@@ -7,6 +7,7 @@ import play.api.data.Forms._
 import play.api.data.validation.Constraints._
 
 import model._
+import views._
 
 import java.util.Calendar
 import java.sql.Date
