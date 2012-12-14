@@ -23,12 +23,43 @@ object Employee {
   
   val workRestrictions = Map(
     "Ashlee" -> Set(
-      PositionType.pickup,
-      PositionType.drivethru),
+      (PositionType.pickup, 1),
+      (PositionType.pickup, 2),
+      (PositionType.pickup, 3),
+      (PositionType.drivethru, 1),
+      (PositionType.drivethru, 2),
+      (PositionType.production, 1),
+      (PositionType.production, 2),
+      (PositionType.production, 3)),
     "Megan" -> Set(
-      PositionType.pickup,
-      PositionType.drivethru,
-      PositionType.production))
+      (PositionType.pickup, 1),
+      (PositionType.pickup, 2),
+      (PositionType.pickup, 3),
+      (PositionType.drivethru, 1),
+      (PositionType.drivethru, 2),
+      (PositionType.production, 1),
+      (PositionType.production, 2),
+      (PositionType.production, 3)),
+    "Kaitlyn" -> Set(
+      (PositionType.drivethru, 1),
+      (PositionType.drivethru, 2),
+      (PositionType.dropoff, 2),
+      (PositionType.pickup, 1),
+      (PositionType.pickup, 2),
+      (PositionType.pickup, 3),
+      (PositionType.production, 1),
+      (PositionType.production, 2),
+      (PositionType.production, 3)),
+    "Macy" -> Set(
+      (PositionType.drivethru, 1),
+      (PositionType.drivethru, 2),
+      (PositionType.dropoff, 2),
+      (PositionType.pickup, 1),
+      (PositionType.pickup, 2),
+      (PositionType.pickup, 3),
+      (PositionType.production, 1),
+      (PositionType.production, 2),
+      (PositionType.production, 3)))
 }
 
 class Employee(val name: String, val start: Time, val end: Time, val isPharmacist: Boolean) {
@@ -40,7 +71,7 @@ class Employee(val name: String, val start: Time, val end: Time, val isPharmacis
   val validPositions = Employee.workRestrictions.getOrElse(name, Position.allTech)
   
   def valid(t: (Time, Int), p: Position, h: List[(Time, List[(Position, Employee)])]) = {
-    if (isPharmacist) true else validPositions.contains(p.main) && score(t, p, h) < 51
+    if (isPharmacist) true else validPositions.contains((p.main, p.number)) && score(t, p, h) < 51
   }
 
   def score(t: (Time, Int), p: Position, h: List[(Time, List[(Position, Employee)])]) = {

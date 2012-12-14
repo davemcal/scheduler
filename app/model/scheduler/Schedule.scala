@@ -65,7 +65,7 @@ class Schedule(val dateStr: String, val employees: List[Employee]) {
     println
   })
 
-  def printScheduleByEmployee = {
+  /*def printScheduleByEmployee = {
     val sched = fullSchedule
 
     employees foreach (e => {
@@ -107,7 +107,7 @@ class Schedule(val dateStr: String, val employees: List[Employee]) {
 
       println
     })
-  }
+  }*/
 
   def employeesDuring(t: Time) = employees.filter(_.working(t))
 
@@ -117,7 +117,7 @@ class Schedule(val dateStr: String, val employees: List[Employee]) {
     (tuple._1.size, tuple._2.size)
   }
 
-  def positionListDuring(t: Time) = {
+  def positionListDuring(t: (Time, Int)) = {
     import PositionType._
     def modify(list: List[Position], pos: PositionType, description: String) = {
       list.find(_.main == pos) match {
@@ -126,13 +126,16 @@ class Schedule(val dateStr: String, val employees: List[Employee]) {
       }
     }
 
-    val (pharmacists, techs) = workerTupleDuring(t)
+    val (pharmacists, techs) = workerTupleDuring(t._1)
 
-    val basePosMap = positionsMap.getOrElse(workerTupleDuring(t), List.empty)
+    val basePosMap = positionsMap.getOrElse(workerTupleDuring(t._1), List.empty)
 
-    if (sendOVorder && t >= Time("6:30pm") && t < Time("7:30pm")) {
+    val begin = t._1
+    val end = t._1.advance(t._2)
+    
+    if (sendOVorder && end > Time("6:30pm") && begin < Time("7:30pm")) {
       modify(basePosMap, PositionType.dropoff, "send OV order")
-    } else if (receiveOVorder && t >= Time("1:30pm") && t < Time("2:30pm")) {
+    } else if (receiveOVorder && end > Time("1:30pm") && begin < Time("2:30pm")) {
       modify(basePosMap, PositionType.dropoff, "receive OV order")
     } else {
       basePosMap
@@ -156,7 +159,7 @@ class Schedule(val dateStr: String, val employees: List[Employee]) {
     val receiveTimes = if (receiveOVorder) List(Time("1:30pm"), Time("2:30pm")) else Nil
 
     //val times = (sendTimes ++ receiveTimes ++ /*rotateTimes ++*/ employees.map(_.start) ++ employees.map(_.end)).sorted.distinct
-    val times = (rotateTimes ++ employees.map(_.end)).sorted.distinct
+    val times = (employees.map(_.start) ++ employees.map(_.end)).sorted.distinct
     times.sliding(2).toList.map(list => (list.head, list.last - list.head))
   }
 
@@ -170,10 +173,14 @@ class Schedule(val dateStr: String, val employees: List[Employee]) {
 
   def displayableSchedule = {
     val scheduleMap = fullSchedule.map(tuple => {
-      val (time, list) = tuple
+      val ((time, duration), list) = tuple
 
       (time, list.map(t => (t._2, t._1)).toMap)
     })
+    
+    val timeDuration = fullSchedule.map(tuple => {
+      tuple._1
+    }).toMap
 
     /*val schedByEmployee = employees.map(e => {
       def addPos(list: List[(Time, Int, Position)], tuple: (Time, Map[Employee, Position])) = {
@@ -195,35 +202,37 @@ class Schedule(val dateStr: String, val employees: List[Employee]) {
       (e, scheduleMap.foldLeft(List.empty: List[(Time, Int, Position)])(addPos))
     }).toMap*/
 
-    (employees.sortBy(e => (!e.isPharmacist, e.name.toUpperCase())), scheduleMap.map(tuple => {
+    def employeeSortCriteria(e: Employee) = (!e.isPharmacist, e.start, e.end, e.name.toUpperCase)
+    
+    (employees.sortBy(employeeSortCriteria), scheduleMap.map(tuple => {
       val (time, posMap) = tuple
       val posMapString = posMap.map(t => (t._1, t._2.toString))
 
       val (pharms, emps) = posMap.partition(_._1.isPharmacist)
 
-      val sorted = employees.sortBy(e => (!e.isPharmacist, e.name.toUpperCase()))
+      val sorted = employees.sortBy(employeeSortCriteria)
       /*val empsForTime = sorted.collect(e => schedByEmployee(e).find(tuple => tuple._1 == time) match {
         case Some((time, occ, pos)) => (time, occ, pos)
       })*/
 
-      (time, pharms.size, emps.size, sorted.map(posMap.getOrElse(_, new Position(PositionType.off, 0, "", false))))
+      (time, time.advance(timeDuration(time)), pharms.size, emps.size, sorted.map(posMap.getOrElse(_, new Position(PositionType.off, 0, "", false))))
     }))
   }
 
   def fullSchedule = {
-    def scheduleFrom(timesLeft: List[(Time, Int)], h: List[(Time, List[(Position, Employee)])]): List[(Time, List[(Position, Employee)])] = {
+    def scheduleFrom(timesLeft: List[(Time, Int)], h: List[((Time, Int), List[(Position, Employee)])]): List[((Time, Int), List[(Position, Employee)])] = {
       if (timesLeft.isEmpty) h
       else {
-        val scheduleOptions = fillStream(timesLeft.head, h)
+        val scheduleOptions = fillStream(timesLeft.head, h.map(t => (t._1._1, t._2)))
 
         if (scheduleOptions.isEmpty) {
           println("No schedule at time " + timesLeft.head)
 
-          scheduleFrom(timesLeft.tail, (timesLeft.head._1, List.empty) :: h)
+          scheduleFrom(timesLeft.tail, (timesLeft.head, List.empty) :: h)
         } else {
-          val scheduleForCurrentTime = scheduleOptions.minBy(l => (scoreCurrentSchedule(timesLeft.head, l, h), l.map(_._2.name).mkString))
+          val scheduleForCurrentTime = scheduleOptions.minBy(l => (scoreCurrentSchedule(timesLeft.head, l, h.map(t => (t._1._1, t._2))), l.map(_._2.name).mkString))
 
-          scheduleFrom(timesLeft.tail, (timesLeft.head._1, scheduleForCurrentTime) :: h)
+          scheduleFrom(timesLeft.tail, (timesLeft.head, scheduleForCurrentTime) :: h)
         }
       }
     }
@@ -256,7 +265,7 @@ class Schedule(val dateStr: String, val employees: List[Employee]) {
     }
 
     val workers = employeesDuring(t._1).toSet
-    val positions = positionListDuring(t._1)
+    val positions = positionListDuring(t)
 
     fillr(List.empty, positions, workers)
   }

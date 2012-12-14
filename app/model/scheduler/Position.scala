@@ -24,8 +24,14 @@ class Position(val main: PositionType, val number: Int, val description: String,
 
 object Position {
   val allTech = Set(
-      PositionType.drivethru,
-      PositionType.dropoff,
-      PositionType.pickup,
-      PositionType.production)
+      (PositionType.drivethru, 1),
+      (PositionType.drivethru, 2),
+      (PositionType.dropoff, 1),
+      (PositionType.dropoff, 2),
+      (PositionType.pickup, 1),
+      (PositionType.pickup, 2),
+      (PositionType.pickup, 3),
+      (PositionType.production, 1),
+      (PositionType.production, 2),
+      (PositionType.production, 3))
 }

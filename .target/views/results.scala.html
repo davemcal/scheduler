@@ -17,7 +17,7 @@
 	</tr></thead>
 
 	@for((time, numPharm, numEmp, posList) <- schedule._2) {
-		<tr><th class="time">@time<br />@numPharm pharmacists<br />@numEmp techs</th>
+		<tr><th class="time">@time<br />@numPharm Pharms<br />@numEmp Techs</th>
 		@for(pos <- posList) {
 		  <td><center>@pos</center></td>
 		}

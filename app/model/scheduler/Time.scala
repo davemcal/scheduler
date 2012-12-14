@@ -12,6 +12,8 @@ case class Time(val minutes: Int) extends Ordered[Time] {
 
   def -(that: Time) = minutes - that.minutes
 
+  def advance(length: Int) = new Time(minutes + length)
+  
   override def toString = {
     if (minutes == 0) "" else {
       val hour = (minutes / 60) % 12
