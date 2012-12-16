@@ -1,13 +1,30 @@
-table {
-	page-break-inside:auto;
+@media print {
+
+	table.results {
+		border-collapse: collapse;
+	}
+
+	table.results, table.results td, table.results tr, table.results th {
+		border: 1px solid #dddddd;
+	}
+
+}
+
+@page figures {
+	size: landscape;
 }
 
 tr    { 
 	page-break-inside:avoid; page-break-after:auto;
+	orphans: 5;
 }
 
 thead { 
 	display:table-header-group;
+}
+
+tbody {
+    display:table-row-group;
 }
 
 th.employee {

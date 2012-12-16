@@ -4,7 +4,7 @@
     
     <h1> Schedule for @date</h1>
 	
-	<table class="table table-bordered">
+	<table class="table table-bordered results">
 
 	<thead><tr><th></th>
 	@for(e <- schedule._1) {
@@ -15,7 +15,7 @@
 		<br /> @e.start - @e.end </th>
 	}
 	</tr></thead>
-
+	<tbody>
 	@for((start, end, numPharm, numEmp, posList) <- schedule._2) {
 		<tr><th class="time">@start - @end<br />@numPharm Pharms<br />@numEmp Techs</th>
 		@for(pos <- posList) {
@@ -23,5 +23,6 @@
 		}
 		</tr>
 	}
+	</tbody>
 	</table>
 }

@@ -115,32 +115,42 @@
 		$('.employeeData').change(function() {
 			var data = $(this).closest(".accordion-inner");
 			var htmlText = data.find(".employeeName").val();
-			if (data.find(".employeeIsPharmacist").is(":checked")) {
-				htmlText = htmlText + " <i class='icon-star'></i> ";
+			if (htmlText == "") {
+				$(this).closest(".employeeInfo").find(".employeeHeading").html("Add a new employee<i class = 'icon-chevron-down pull-right'></i>");
 			} else {
-				htmlText = htmlText + " <i class='icon-star-empty'></i> ";
+				if (data.find(".employeeIsPharmacist").is(":checked")) {
+					htmlText = htmlText + " <i class='icon-star'></i> ";
+				} else {
+					htmlText = htmlText + " <i class='icon-star-empty'></i> ";
+				}
+				if (data.find(".employeeStart").val() == "" && data.find(".employeeEnd").val() == "") {
+					htmlText = htmlText + "(Off)"
+				} else {
+					var timeRegex = /(\d\d?):?(\d\d)?(a|pm)?/;
+					var startArr = timeRegex.exec(data.find(".employeeStart").val());
+					var startMinutes = "00";
+					if (startArr[2] != undefined) startMinutes = startArr[2];
+					var startAMPM = "am";
+					if (startArr[1] < 7 || startArr[1] == 12) startAMPM = "pm"
+					if (startArr[3] != undefined) startAMPM = startArr[3];
+					htmlText = htmlText + "(" + startArr[1] + ":" + startMinutes + startAMPM + " - ";
+					var endArr = timeRegex.exec(data.find(".employeeEnd").val());
+					var endMinutes = "00";
+					if (endArr[2] != undefined) endMinutes = endArr[2];
+					var endAMPM = "pm";
+					if (endArr[1] == 11) endAMPM = "am"
+					if (endArr[3] != undefined) endAMPM = endArr[3];
+					htmlText = htmlText + endArr[1] + ":" + endMinutes + endAMPM + ')';
+				}
+				htmlText = htmlText + "<i class = 'icon-chevron-down pull-right'></i>";			
+				$(this).closest(".employeeInfo").find(".employeeHeading").html(htmlText);
 			}
-			if (data.find(".employeeStart").val() == "" && data.find(".employeeEnd").val() == "") {
-				htmlText = htmlText + "(Off)"
-			} else {
-				var timeRegex = /(\d\d?):?(\d\d)?(a|pm)?/;
-				var startArr = timeRegex.exec(data.find(".employeeStart").val());
-				var startMinutes = "00";
-				if (startArr[2] != undefined) startMinutes = startArr[2];
-				var startAMPM = "am";
-				if (startArr[1] < 7 || startArr[1] == 12) startAMPM = "pm"
-				if (startArr[3] != undefined) startAMPM = startArr[3];
-				htmlText = htmlText + "(" + startArr[1] + ":" + startMinutes + startAMPM + " - ";
-				var endArr = timeRegex.exec(data.find(".employeeEnd").val());
-				var endMinutes = "00";
-				if (endArr[2] != undefined) endMinutes = endArr[2];
-				var endAMPM = "pm";
-				if (endArr[1] == 11) endAMPM = "am"
-				if (endArr[3] != undefined) endAMPM = endArr[3];
-				htmlText = htmlText + endArr[1] + ":" + endMinutes + endAMPM + ')';
-			}
-			htmlText = htmlText + "<i class = 'icon-chevron-down pull-right'></i>";			
-			$(this).closest(".employeeInfo").find(".employeeHeading").html(htmlText);
+		});
+		
+		$('.clearTimes').click(function() {
+			$('.employeeStart').val("");
+			$('.employeeEnd').val("");
+			$('.employeeStart').change();
 		});
 	</script>
 }
