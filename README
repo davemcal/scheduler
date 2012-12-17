@@ -1,4 +1,5 @@
-This is your new Play 2.0 application
-=====================================
+Schedule Web App
 
-This file will be packaged with your application, when using `play dist`.
+Viewable at http://mighty-fjord-3423.herokuapp.com/
+
+Uses scala, scala play, and twitter bootstrap.
